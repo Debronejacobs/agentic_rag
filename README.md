@@ -1,25 +1,21 @@
 
-
 PRODUCTION RAG APPLICATION
 
 ## Getting Started
+first install and run pocketbase 
+```bash
+./pocketbase serve 
+```
 
-First, run the development server:
+make a .env.local and add 
+
+```bash
+NEXT_PUBLIC_PB_URL=http://127.0.0.1:8090
+```
+now run  the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-
-
-
-
-
