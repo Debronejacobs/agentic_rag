@@ -7,10 +7,21 @@ This project features a Production-Ready Retrieval-Augmented Generation (RAG) ap
 -----
 
 ## Getting Started
+first install and run pocketbase 
+```bash
+./pocketbase serve 
+```
 
-To get this project up and running, you'll need to set up the PocketBase backend and then configure the Next.js frontend.
+make a .env.local and add 
 
-### Prerequisites
+```bash
+NEXT_PUBLIC_PB_URL=http://127.0.0.1:8090
+```
+now run  the development server:
+
+```bash
+npm run dev
+```
 
   * **PocketBase Instance:** You'll need a running PocketBase instance (version 0.20.0 or later is recommended). If you don't have one, you can download the executable from the [PocketBase documentation](https://pocketbase.io/docs/).
   * **Node.js & npm:** Required for the Next.js frontend.
