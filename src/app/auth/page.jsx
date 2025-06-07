@@ -23,7 +23,7 @@ export default function AuthPage() {
   useEffect(() => {
     const unsubscribe = pb.authStore.onChange((token, record) => {
       if (token && record) { // Check for both token and record to confirm valid auth
-        // User has just logged in or auth state changed to valid
+        
         router.push('/dashboard');
       }
     });

@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "ClauseFinder",
+  title: "TuriqAI",
   description: "A searchable, conversational interface for contracts and case files—just ask and see your answers with source links",
 };
 

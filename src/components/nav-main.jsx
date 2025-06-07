@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 
 export function NavMain({
-  items
+  items, onSelect
 }) {
   return (
     <SidebarGroup>
@@ -45,9 +45,12 @@ export function NavMain({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                        <button
+                          onClick={() => onSelect(subItem.id)}
+                          className="w-full text-left" // Added basic styling to make button fill space
+                        >
                           <span>{subItem.title}</span>
-                        </a>
+                        </button>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

@@ -14,32 +14,32 @@ const data = {
       icon: Bot,
       isActive: true,
       items: [
-        { title: "New Conversation" },
-        { title: "History" },
+        { title: "New Conversation" , id:"conversations" },
+        { title: "History" , id : "past_chats"},
       ],
     },
     {
       title: "Documents",
       icon: FileText,
       items: [
-        { title: "Upload docs" },
+        { title: "Upload data" , id : "upload_docs" },
       ],
     },
     {
       title: "Settings",
       icon: Settings2,
       items: [
-        { title: "Profile" },
+        { title: "Profile"  , id : "profile_settings"  },
       ],
     },
   ],
 }
 
-export function AppSidebar(props) {
+export function AppSidebar({onSelect , ...props}) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data.navMain}  onSelect={onSelect} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser  />

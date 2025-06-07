@@ -1,4 +1,6 @@
+// app/page.jsx (or wherever your main Page component is)
 "use client";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -13,10 +15,15 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useEffect, useState, createContext, useContext } from 'react'; 
+import { useEffect, useState, createContext, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { pb } from '../../../lib/pocketbase'; 
+import { pb } from "../../../lib/pocketbase";
 import ChatMessage from "@/components/ChatMessage";
+// Import all components you might want to render
+// Assuming these are the components you want to render
+import PastChats from "@/components/PastChats";
+import Profile from "@/components/Profile";
+import UploadDocs from "@/components/UploadDocs";// You'll need to create this or rename your Document component
 
 // Create theme context directly in this file
 const ThemeContext = createContext({
@@ -24,10 +31,10 @@ const ThemeContext = createContext({
   toggleTheme: () => {},
 });
 
-// Theme toggle button component
+// Theme toggle button component (no changes needed here)
 function ThemeToggle() {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  
+
   return (
     <button
       onClick={toggleTheme}
@@ -50,7 +57,7 @@ function ThemeToggle() {
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
         </svg>
       ) : (
-       
+        // Sun icon for dark mode (click to switch to light)
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="18"
@@ -82,11 +89,14 @@ export default function Page() {
   // Authentication states
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
+
   // Theme state
   const [theme, setTheme] = useState('light');
 
-  // Theme toggle function
+  // New state to manage the active component based on sidebar selection
+  const [activeView, setActiveView] = useState("new-conversation"); // Default to 'New Conversation'
+
+  // Theme toggle function (no changes needed here)
   const toggleTheme = () => {
     setTheme((prevTheme) => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
@@ -98,7 +108,13 @@ export default function Page() {
     });
   };
 
-  // Handle authentication check
+  // Handler for sidebar item selection
+  const handleSidebarSelect = (id) => {
+    console.log("Selected sidebar item:", id); // For debugging
+    setActiveView(id);
+  };
+
+  // Handle authentication check (no changes needed here)
   useEffect(() => {
     const isValidUser = pb.authStore.isValid;
     setIsAuthenticated(isValidUser); // Set authentication status
@@ -108,21 +124,21 @@ export default function Page() {
     }
     // Mark that the authentication check is complete, regardless of outcome
     setIsAuthChecked(true);
-  }, [router]); // Add router to dependency array as it's used in the effect
+  }, [router]);
 
- 
+  // Theme persistence (no changes needed here)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('clausefinder-theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
+
       // Use saved theme, or user's preference, or default to light
       const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
       setTheme(initialTheme);
     }
   }, []);
 
-  // Apply theme class to document when theme changes
+  // Apply theme class to document when theme changes (no changes needed here)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if (theme === 'dark') {
@@ -133,21 +149,38 @@ export default function Page() {
     }
   }, [theme]);
 
-  
+  // Conditional rendering for authentication
   if (!isAuthChecked) {
-    return null; 
+    return null;
   }
 
   if (!isAuthenticated) {
-    return null; 
+    return null;
   }
+
+  // Function to render the active component
+  const renderActiveComponent = () => {
+    switch (activeView) {
+      case "conversations":
+        return <ChatMessage />;
+      case "past_chats":
+        return <PastChats />;
+      case "upload_docs":
+        return <UploadDocs />; // Make sure you create this component
+      case "profile_settings":
+        return <Profile />;
+      default:
+        return <ChatMessage />; // Default to ChatMessage if no match
+    }
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <div className={`${theme === 'dark' ? 'dark' : ''}`}>
         <div className="min-h-screen  dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200">
           <SidebarProvider>
-            <AppSidebar className="dark:bg-gray-800 dark:border-gray-700" />
+            {/* Pass the handleSidebarSelect function to AppSidebar */}
+            <AppSidebar className="dark:bg-gray-800 dark:border-gray-700" onSelect={handleSidebarSelect} />
             <SidebarInset>
               <header
                 className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] border-b dark:border-gray-800 ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ">
@@ -169,7 +202,8 @@ export default function Page() {
                   <ThemeToggle />
                 </div>
               </header>
-              <ChatMessage />
+              {/* Render the active component here */}
+              {renderActiveComponent()}
             </SidebarInset>
           </SidebarProvider>
         </div>
