@@ -447,25 +447,54 @@ function UploadDocs() {
              showActionMessage('error', "You must be logged in to delete files.");
              return;
          }
-         setDeletingDocId(docId);
-         showActionMessage(null, null);
-
+    
+         // Find the document before removing it optimistically, in case we need to revert
+         const docToDelete = documents.find(doc => doc.id === docId);
+         if (!docToDelete) {
+             console.warn("Attempted to delete document not found in state:", docId);
+             showActionMessage('error', "Document not found.");
+             return;
+         }
+    
+         setDeletingDocId(docId); // Set state to show loading spinner for this item
+         showActionMessage(null, null); // Clear any previous general messages
+    
+         // --- Optimistic Update: Remove from UI immediately ---
+         setDocuments(prevDocs => prevDocs.filter(doc => doc.id !== docId));
+         console.log(`Optimistically removed document ID ${docId} from UI.`);
+    
+    
          try {
-             console.log(`Attempting to delete document ID: ${docId}`);
+             console.log(`Attempting to delete document ID: ${docId} on backend.`);
              await pb.collection('user_files').delete(docId);
-             console.log(`Document ${docId} deleted successfully via API.`);
-             // Subscription listener will handle state update
+             console.log(`Backend deletion successful for ${docId}.`);
+             // If successful, the optimistic update was correct.
+             // The subscription listener would also eventually confirm this, but the UI is already updated.
              showActionMessage('success', 'Document deleted successfully.');
-
+    
          } catch (error) {
-             console.error(`Failed to delete document ${docId}:`, error);
+             console.error(`Failed to delete document ${docId} on backend:`, error);
               const errorMessage = error.message || error.toString();
+    
+             // --- Revert Change: Add document back to UI if backend delete failed ---
+             setDocuments(prevDocs => {
+                 // Add the document back. A simple way is to add to the start or end.
+                 // If maintaining strict sort order before the next fetch/sort is critical,
+                 // more complex insertion logic might be needed based on the original list.
+                 // For simplicity, adding it back to the end here.
+                 const newDocs = [...prevDocs, docToDelete];
+                  // Optional: Re-sort if you need it to appear in its previous sorted position
+                  // This can be complex, relying on the next fetch or subscription might be simpler
+                  // if immediate precise re-sorting isn't critical.
+                 console.log(`Reverting UI change: Added document ID ${docId} back due to failure.`);
+                 return newDocs;
+             });
+    
              showActionMessage('error', `Failed to delete document: ${errorMessage}`);
          } finally {
-             setDeletingDocId(null);
+             setDeletingDocId(null); // Clear deleting state regardless of success or failure
          }
     };
-
 
     // Client-side Filtering and Sorting (applied to the array fetched from PB, which is already sorted by sortBy)
     const filteredAndSortedDocuments = useMemo(() => {
