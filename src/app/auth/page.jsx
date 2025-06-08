@@ -64,7 +64,7 @@ export default function AuthPage() {
                 <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zm-6 4a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-blue-400">ClauseFinder</h1>
+            <h1 className="text-3xl font-bold text-blue-400">TuriqAI</h1>
           </div>
           <h2 className="text-2xl font-semibold mb-6 text-gray-100">Discover and analyze contract clauses with ease</h2>
           <p className="text-lg text-gray-300 mb-6">

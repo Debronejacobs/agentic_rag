@@ -35,6 +35,8 @@ yarn-error.log*
 
 # vercel
 .vercel
+.zed
+minio_20250524170830.0.0_amd64.deb
 
 # typescript
 *.tsbuildinfo
